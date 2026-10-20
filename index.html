@@ -53,6 +53,43 @@
 			min-height: 100vh;
 		}
 
+		/* Yashirin Login Modal */
+		#loginModal {
+			display: none;
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: rgba(0, 0, 0, 0.7);
+			z-index: 1000;
+			justify-content: center;
+			align-items: center;
+		}
+
+		.login-box {
+			background: var(--card-bg);
+			padding: 30px;
+			border-radius: 12px;
+			width: 350px;
+			border: 1px solid var(--border);
+			box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+		}
+
+		.login-box h2 {
+			margin-bottom: 20px;
+			font-size: 20px;
+			text-align: center;
+			color: var(--primary);
+		}
+
+		/* App container (boshida yashirin bo'ladi) */
+		#appContainer {
+			display: none;
+			width: 100%;
+			height: 100vh;
+		}
+
 		/* Sidebar */
 		aside {
 			width: 280px;
@@ -67,13 +104,6 @@
 			padding: 24px 20px;
 			border-bottom: 1px solid var(--border);
 			text-align: center;
-		}
-
-		.logo-area img {
-			width: 50px;
-			height: 50px;
-			object-fit: contain;
-			margin-bottom: 8px;
 		}
 
 		.logo-area h1 {
@@ -113,7 +143,6 @@
 			align-items: center;
 		}
 
-		/* Top Header & Main */
 		main {
 			flex: 1;
 			display: flex;
@@ -166,7 +195,6 @@
 			color: var(--primary);
 		}
 
-		/* Metrics Grid */
 		.metrics {
 			display: grid;
 			grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -196,7 +224,6 @@
 			color: var(--primary);
 		}
 
-		/* Tables */
 		table {
 			width: 100%;
 			border-collapse: collapse;
@@ -223,13 +250,15 @@
 
 		select,
 		input {
-			padding: 8px 12px;
+			width: 100%;
+			padding: 10px 12px;
 			border: 1px solid var(--border);
 			border-radius: 6px;
 			background-color: var(--card-bg);
 			color: var(--text-color);
 			outline: none;
 			font-size: 14px;
+			margin-bottom: 12px;
 		}
 
 		button.btn {
@@ -241,6 +270,7 @@
 			cursor: pointer;
 			font-weight: 600;
 			font-size: 14px;
+			width: 100%;
 		}
 
 		button.btn:hover {
@@ -284,181 +314,272 @@
 
 <body class="dark-mode">
 
-	<!-- Sidebar -->
-	<aside>
-		<div>
-			<div class="logo-area">
-				<!-- Urganch RTT Logosi o'rniga rasmiy emblema belgisi -->
-				<div style="font-size: 28px; margin-bottom: 4px;">🏛️</div>
-				<h1>Urganch RTT<br><span style="font-size: 11px; font-weight: 400; color: var(--text-muted);">Sinf Boshqaruv
-						Tizimi</span></h1>
+	<!-- Yashirin Kirish (Login) Modal oynasi -->
+	<div id="loginModal">
+		<div class="login-box">
+			<h2>🔐 Tizimga Kirish</h2>
+			<div class="form-group">
+				<label>Login:</label>
+				<input type="text" id="loginUser" placeholder="Loginingizni kiriting">
 			</div>
-			<ul class="menu">
-				<li class="active" onclick="switchSection('dashboard', this)">📊 Asosiy Dashboard</li>
-				<li onclick="switchSection('attendance', this)">📝 Davomat va Kechikishlar</li>
-				<li onclick="switchSection('students', this)">👥 O'quvchilar Ro'yxati</li>
-				<li onclick="switchSection('schedule', this)">⏰ Dars Jadvali</li>
-				<li onclick="switchSection('profile', this)">🔍 Shaxsiy Dashboard</li>
-			</ul>
+			<div class="form-group">
+				<label>Parol:</label>
+				<input type="password" id="loginPass" placeholder="Parolingizni kiriting">
+			</div>
+			<button class="btn" onclick="checkLogin()">Kirish</button>
+			<p id="loginError" style="color: var(--danger-text); font-size: 13px; text-align: center; margin-top: 10px;"></p>
 		</div>
-		<div class="sidebar-footer">
-			<span style="font-size: 13px; color: var(--text-muted);">Rejim</span>
-			<button class="theme-toggle" onclick="toggleTheme()">☀️ / 🌙</button>
-		</div>
-	</aside>
+	</div>
 
-	<!-- Main Section -->
-	<main>
-		<header class="topbar">
-			<div class="clock-box" id="liveClock">00:00:00 | 2026-10-20</div>
-			<div style="font-size: 14px; font-weight: 600;">Sinf: 28 nafar o'quvchi</div>
-		</header>
+	<!-- Asosiy Dastur (Faqat kirgandan keyin ko'rinadi) -->
+	<div id="appContainer">
+		<!-- Sidebar -->
+		<aside>
+			<div>
+				<div class="logo-area">
+					<div style="font-size: 28px; margin-bottom: 4px;">🏛️</div>
+					<h1>Urganch RTT<br><span style="font-size: 11px; font-weight: 400; color: var(--text-muted);">Sinf Boshqaruv
+							Tizimi</span></h1>
+				</div>
+				<ul class="menu">
+					<li class="active" onclick="switchSection('dashboard', this)">📊 Asosiy Dashboard</li>
+					<li onclick="switchSection('attendance', this)">📝 Davomat va Kechikishlar</li>
+					<li onclick="switchSection('students', this)">👥 O'quvchilar Ro'yxati</li>
+					<li onclick="switchSection('schedule', this)">⏰ Dars Jadvali</li>
+					<li onclick="switchSection('profile', this)">🔍 Shaxsiy Dashboard</li>
+					<li onclick="switchSection('history', this)" style="color: var(--accent);">🕵️‍♂️ Kirish Tarixi</li>
+				</ul>
+			</div>
+			<div class="sidebar-footer">
+				<span id="currentLoggedInUser" style="font-size: 12px; font-weight: bold; color: var(--accent);"></span>
+				<button class="theme-toggle" onclick="toggleTheme()">☀️ / 🌙</button>
+			</div>
+		</aside>
 
-		<div class="content-body">
-			<!-- 1. DASHBOARD -->
-			<section id="dashboard" class="section active">
-				<h2>Bugungi Kunlik Xulosa</h2>
-				<div class="metrics">
-					<div class="card">
-						<h3>Jami O'quvchilar</h3>
-						<div class="value">28</div>
+		<!-- Main Section -->
+		<main>
+			<header class="topbar">
+				<div class="clock-box" id="liveClock">00:00:00 | 2026-10-20</div>
+				<button class="theme-toggle" onclick="logout()"
+					style="border-color: var(--danger-text); color: var(--danger-text);">Chiqish</button>
+			</header>
+
+			<div class="content-body">
+				<!-- 1. DASHBOARD -->
+				<section id="dashboard" class="section active">
+					<h2>Bugungi Kunlik Xulosa</h2>
+					<div class="metrics">
+						<div class="card">
+							<h3>Jami O'quvchilar</h3>
+							<div class="value">28</div>
+						</div>
+						<div class="card">
+							<h3>O'z vaqtida kelganlar</h3>
+							<div class="value" id="statPresent">0</div>
+						</div>
+						<div class="card">
+							<h3>Kechikkanlar (Dars/Tanaffuz)</h3>
+							<div class="value" id="statLate">0</div>
+						</div>
+						<div class="card">
+							<h3>Kelmaganlar</h3>
+							<div class="value" id="statAbsent">0</div>
+						</div>
 					</div>
-					<div class="card">
-						<h3>O'z vaqtida kelganlar</h3>
-						<div class="value" id="statPresent">0</div>
+					<h2>Bugungi Davomat Ro'yxati</h2>
+					<div id="todayLogContainer">
+						<p style="color: var(--text-muted);">Bugun uchun hali davomat belgilanmagan.</p>
 					</div>
-					<div class="card">
-						<h3>Kechikkanlar (Dars/Tanaffuz)</h3>
-						<div class="value" id="statLate">0</div>
+				</section>
+
+				<!-- 2. DAVOMATNI BELGILASH -->
+				<section id="attendance" class="section">
+					<h2>Davomat va Kechikishlarni Qayd etish</h2>
+					<div class="form-group" style="max-width: 300px;">
+						<label>Sanani tanlang:</label>
+						<input type="date" id="attendanceDate">
 					</div>
-					<div class="card">
-						<h3>Kelmaganlar</h3>
-						<div class="value" id="statAbsent">0</div>
+					<table id="attendanceTable">
+						<thead>
+							<tr>
+								<th>F.I.O</th>
+								<th>Holat</th>
+								<th>Izoh (Masalan: 10 min kechikdi)</th>
+							</tr>
+						</thead>
+						<tbody></tbody>
+					</table>
+					<button class="btn" onclick="saveAttendance()" style="width: auto;">Davomatni Saqlash</button>
+				</section>
+
+				<!-- 3. O'QUVCHILAR RO'YXATI -->
+				<section id="students" class="section">
+					<h2>O'quvchilar Ro'yxati (28 ta)</h2>
+					<table id="studentsTable">
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>F.I.O (Ism Familiya)</th>
+								<th>Telefon Raqami</th>
+							</tr>
+						</thead>
+						<tbody></tbody>
+					</table>
+				</section>
+
+				<!-- 4. DARS JADVALI -->
+				<section id="schedule" class="section">
+					<h2>Dars Jadvali Qoidalari</h2>
+					<div class="card" style="max-width: 600px; line-height: 1.6;">
+						<p><b>📅 Dushanba – Payshanba:</b> Har kuni 4 ta para.</p>
+						<p><b>📅 Juma – Shanba:</b> Har kuni 3 ta para.</p>
+						<ul style="margin-left: 20px; margin-top: 10px; color: var(--text-muted);">
+							<li>Har bir para: <b>80 daqiqa</b></li>
+							<li>3-paradan keyin 4-para: <b>1 soat (60 daqiqa)</b></li>
+							<li>2-paradan keyin tanaffuz: <b>20 daqiqa</b></li>
+							<li>Qolgan tanaffuzlar: <b>10 daqiqa</b></li>
+						</ul>
 					</div>
-				</div>
-				<h2>Bugungi Davomat Ro'yxati</h2>
-				<div id="todayLogContainer">
-					<p style="color: var(--text-muted);">Bugun uchun hali davomat belgilanmagan.</p>
-				</div>
-			</section>
+				</section>
 
-			<!-- 2. DAVOMATNI BELGILASH -->
-			<section id="attendance" class="section">
-				<h2>Davomat va Kechikishlarni Qayd etish</h2>
-				<div class="form-group" style="max-width: 300px;">
-					<label>Sanani tanlang:</label>
-					<input type="date" id="attendanceDate">
-				</div>
-				<table id="attendanceTable">
-					<thead>
-						<tr>
-							<th>F.I.O</th>
-							<th>Holat</th>
-							<th>Izoh (Masalan: 10 min kechikdi)</th>
-						</tr>
-					</thead>
-					<tbody></tbody>
-				</table>
-				<button class="btn" onclick="saveAttendance()">Davomatni Saqlash</button>
-			</section>
+				<!-- 5. SHAXSIY DASHBOARD -->
+				<section id="profile" class="section">
+					<h2>O'quvchining Shaxsiy Dashboardi</h2>
+					<div class="form-group" style="max-width: 350px;">
+						<label>O'quvchini tanlang:</label>
+						<select id="profileSelect" onchange="loadStudentProfile()">
+							<option value="">Tanlang...</option>
+						</select>
+					</div>
+					<div id="profileDetails" class="card" style="margin-top: 20px;">
+						<p style="color: var(--text-muted);">Ma'lumot ko'rsatish uchun o'quvchini tanlang.</p>
+					</div>
+				</section>
 
-			<!-- 3. O'QUVCHILAR RO'YXATI -->
-			<section id="students" class="section">
-				<h2>O'quvchilar Ro'yxati (28 ta)</h2>
-				<table id="studentsTable">
-					<thead>
-						<tr>
-							<th>ID</th>
-							<th>F.I.O (Ism Familiya)</th>
-							<th>Telefon Raqami</th>
-						</tr>
-					</thead>
-					<tbody></tbody>
-				</table>
-			</section>
-
-			<!-- 4. DARS JADVALI -->
-			<section id="schedule" class="section">
-				<h2>Dars Jadvali Qoidalari</h2>
-				<div class="card" style="max-width: 600px; line-height: 1.6;">
-					<p><b>📅 Dushanba – Payshanba:</b> Har kuni 4 ta para.</p>
-					<p><b>📅 Juma – Shanba:</b> Har kuni 3 ta para.</p>
-					<ul style="margin-left: 20px; margin-top: 10px; color: var(--text-muted);">
-						<li>Har bir para: <b>80 daqiqa</b></li>
-						<li>3-paradan keyin 4-para: <b>1 soat (60 daqiqa)</b></li>
-						<li>2-paradan keyin tanaffuz: <b>20 daqiqa</b></li>
-						<li>Qolgan tanaffuzlar: <b>10 daqiqa</b></li>
-					</ul>
-				</div>
-			</section>
-
-			<!-- 5. SHAXSIY DASHBOARD -->
-			<section id="profile" class="section">
-				<h2>O'quvchining Shaxsiy Dashboardi</h2>
-				<div class="form-group" style="max-width: 350px;">
-					<label>O'quvchini tanlang:</label>
-					<select id="profileSelect" onchange="loadStudentProfile()">
-						<option value="">Tanlang...</option>
-					</select>
-				</div>
-				<div id="profileDetails" class="card" style="margin-top: 20px;">
-					<p style="color: var(--text-muted);">Ma'lumot ko'rsatish uchun o'quvchini tanlang.</p>
-				</div>
-			</section>
-		</div>
-	</main>
+				<!-- 6. KIRISH/CHIQISH TARIXI (Yashirin monitoring) -->
+				<section id="history" class="section">
+					<h2>🕵️‍♂️ Tizimga Kirish va Chiqish Tarixi</h2>
+					<p style="color: var(--text-muted); margin-bottom: 20px;">Kim qachon kirgani va chiqqanligi yashirin kuzatilib
+						boriladi.</p>
+					<table id="historyTable">
+						<thead>
+							<tr>
+								<th>Foydalanuvchi</th>
+								<th>Harakat</th>
+								<th>Sana va Vaqt</th>
+							</tr>
+						</thead>
+						<tbody></tbody>
+					</table>
+				</section>
+			</div>
+		</main>
+	</div>
 
 	<script>
+		// Foydalanuvchilar bazasi
+		const users = [
+			{ login: "mustafo", pass: "Parol123" },
+			{ login: "nurali", pass: "071009" },
+			{ login: "bekzod", pass: "beko0609" }
+		]
+
 		// 28 ta o'quvchi ma'lumotlari
 		const students = [
-			{ id: 1, name: "Aliyev Anvar", phone: "+998 90 101 45 67" },
-			{ id: 2, name: "Karimova Malika", phone: "+998 90 102 45 67" },
-			{ id: 3, name: "Tursunov Jasur", phone: "+998 90 103 45 67" },
-			{ id: 4, name: "Ergasheva Dilnoza", phone: "+998 90 104 45 67" },
-			{ id: 5, name: "Nazarov Bekzod", phone: "+998 90 105 45 67" },
-			{ id: 6, name: "Umarova Zarnigor", phone: "+998 90 106 45 67" },
-			{ id: 7, name: "Qodirov Shoxrux", phone: "+998 90 107 45 67" },
-			{ id: 8, name: "Saidova Madina", phone: "+998 90 108 45 67" },
-			{ id: 9, name: "Sodiqov Bobur", phone: "+998 90 109 45 67" },
-			{ id: 10, name: "Yusupova Aziza", phone: "+998 90 110 45 67" },
-			{ id: 11, name: "Ismoilov Sanjar", phone: "+998 90 111 45 67" },
-			{ id: 12, name: "Mamatova Nigora", phone: "+998 90 112 45 67" },
-			{ id: 13, name: "Rahimov Sardor", phone: "+998 90 113 45 67" },
-			{ id: 14, name: "Khamidova Sevara", phone: "+998 90 114 45 67" },
-			{ id: 15, name: "Alijanov Murod", phone: "+998 90 115 45 67" },
-			{ id: 16, name: "Oripova Zaynab", phone: "+998 90 116 45 67" },
-			{ id: 17, name: "Valiyev Rustam", phone: "+998 90 117 45 67" },
-			{ id: 18, name: "Tojiboyeva Gulchehra", phone: "+998 90 118 45 67" },
-			{ id: 19, name: "Akbarov Diyor", phone: "+998 90 119 45 67" },
-			{ id: 20, name: "Niyozova Zulfiya", phone: "+998 90 120 45 67" },
-			{ id: 21, name: "Hasanov Ulug'bek", phone: "+998 90 121 45 67" },
-			{ id: 22, name: "G'aniyeva Feruza", phone: "+998 90 122 45 67" },
-			{ id: 23, name: "Sobirov Oybek", phone: "+998 90 123 45 67" },
-			{ id: 24, name: "Xalilov Shohjahon", phone: "+998 90 124 45 67" },
-			{ id: 25, name: "Mirzayeva Mohira", phone: "+998 90 125 45 67" },
-			{ id: 26, name: "Zokirov Farrux", phone: "+998 90 126 45 67" },
-			{ id: 27, name: "Tolibova Shahlo", phone: "+998 90 127 45 67" },
-			{ id: 28, name: "Karimov Temur", phone: "+998 90 128 45 67" }
+			{ id: 1, name: " Alimova Sarvinoz", phone: "+998 00 000 00 00" },
+			{ id: 2, name: "Atajanov Umar", phone: "+998 91 433 13 14" },
+			{ id: 3, name: "Atajanova Komila", phone: "+998 94 945 71 79" },
+			{ id: 4, name: "Atamoratov Zayniddin", phone: "+998 93 428 20 16" },
+			{ id: 5, name: "Axmedjanov Samandar", phone: "+998 97 517 03 04" },
+			{ id: 6, name: "Beyliyev Nodir", phone: "+998 77 966 59 16" },
+			{ id: 7, name: "Baltayev Jahongir", phone: "+998 99 184 14 44" },
+			{ id: 8, name: "Egamberdiyev Aziz", phone: "+998 94 756 39 34" },
+			{ id: 9, name: "Hojiqurbanov Joshqin", phone: "+998 93 546 52 54" },
+			{ id: 10, name: "Ismailova Hadicha", phone: "+998 87 493 00 68" },
+			{ id: 11, name: "Jumaniyazova Malika", phone: "+998 95 015 73 10" },
+			{ id: 12, name: "Komiljanov Dilshod", phone: "+998 95 121 87 03 " },
+			{ id: 13, name: "Madaminov Mirjahon", phone: "+998 91 093 05 05" },
+			{ id: 14, name: "Maratov Aziz", phone: "+998 90 429 10 42" },
+			{ id: 15, name: "Matrasulova Mahliyo", phone: "+998 94 389 80 60" },
+			{ id: 16, name: "Ozodbayeva Diana", phone: "+998 88 513 18 23" },
+			{ id: 17, name: "Qadamov Nuralibek", phone: "+998 93 798 07 10" },
+			{ id: 18, name: "Quranboyev Shoxjahon ", phone: "+998 99 553 92 20" },
+			{ id: 19, name: "Rakhimboyrv Sobirjon", phone: "+998 77 163 69 69" },
+			{ id: 20, name: "Sadullayev Jahongir", phone: "+998 99 073 86 20" },
+			{ id: 21, name: "Sapayeva Zarnigor", phone: "+998 99 270 85 58" },
+			{ id: 22, name: "Saparbayev Ibrohim", phone: "+998 99 091 88 05" },
+			{ id: 23, name: "Shomuratov Rozmat", phone: "+998 94 888 08 70" },
+			{ id: 24, name: "Shavkatova Sevinch", phone: "+998 88 511 99 60" },
+			{ id: 25, name: "Sharifboyev Nursulton", phone: "+998 93 650 61 19" },
+			{ id: 26, name: "Toxirjanov Mustafo ", phone: "+998 94 310 67 67" },
+			{ id: 27, name: "Yoldashev Maqsadbek", phone: "+998 93 306 49 00" },
+			{ id: 28, name: "Yaqubova Sarajon", phone: "+998 99 352 19 01" }
 		]
 
 		let attendanceLog = JSON.parse(localStorage.getItem('attendanceLog')) || []
+		let accessHistory = JSON.parse(localStorage.getItem('accessHistory')) || []
 
-		// Soatni yangilab turish
+		// Ctrl + Shift + P tugmalar birikmasini ushlash (Yashirin kirish oynasi)
+		window.addEventListener('keydown', function (e) {
+			if (e.ctrlKey && e.shiftKey && (e.key === 'P' || e.key === 'p' || e.code === 'KeyP')) {
+				e.preventDefault()
+				document.getElementById('loginModal').style.display = 'flex'
+				document.getElementById('loginUser').focus()
+			}
+		})
+
+		// Loginni tekshirish
+		function checkLogin() {
+			const u = document.getElementById('loginUser').value.trim()
+			const p = document.getElementById('loginPass').value.trim()
+			const err = document.getElementById('loginError')
+
+			const found = users.find(x => x.login === u && x.pass === p)
+			if (found) {
+				// Kirish tarixini saqlash
+				logAccess(u, "Tizimga kirdi")
+
+				document.getElementById('loginModal').style.display = 'none'
+				document.getElementById('appContainer').style.display = 'flex'
+				document.getElementById('currentLoggedInUser').innerText = `Foydalanuvchi: ${u}`
+
+				document.getElementById('loginUser').value = ''
+				document.getElementById('loginPass').value = ''
+				err.innerText = ''
+				updateDashboard()
+			} else {
+				err.innerText = "Login yoki parol xato!"
+			}
+		}
+
+		// Tizimdan chiqish
+		function logout() {
+			const currentUser = document.getElementById('currentLoggedInUser').innerText.replace("Foydalanuvchi: ", "")
+			if (currentUser) {
+				logAccess(currentUser, "Tizimdan chiqdi")
+			}
+			document.getElementById('appContainer').style.display = 'none'
+		}
+
+		// Tarixni yozib borish funksiyasi
+		function logAccess(username, action) {
+			const now = new Date().toLocaleString('uz-UZ')
+			accessHistory.unshift({ user: username, action: action, time: now })
+			localStorage.setItem('accessHistory', JSON.stringify(accessHistory))
+		}
+
+		// Soatni yangilash
 		function updateClock() {
 			const now = new Date()
-			const timeString = now.toLocaleTimeString('uz-UZ')
-			const dateString = now.toISOString().split('T')[0]
-			document.getElementById('liveClock').innerText = `${timeString} | ${dateString}`
+			document.getElementById('liveClock').innerText = `${now.toLocaleTimeString('uz-UZ')} | ${now.toISOString().split('T')[0]}`
 		}
 		setInterval(updateClock, 1000)
 		updateClock()
 
-		// Kun/Tun rejimini almashtirish
 		function toggleTheme() {
 			document.body.classList.toggle('dark-mode')
 		}
 
-		// Bo'limlarni almashtirish
 		function switchSection(sectionId, element) {
 			document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'))
 			document.querySelectorAll('.menu li').forEach(li => li.classList.remove('active'))
@@ -470,6 +591,7 @@
 			if (sectionId === 'attendance') renderAttendanceForm()
 			if (sectionId === 'profile') renderProfileSelect()
 			if (sectionId === 'dashboard') updateDashboard()
+			if (sectionId === 'history') renderHistoryTable()
 		}
 
 		function renderStudents() {
@@ -596,7 +718,23 @@
             `
 		}
 
-		updateDashboard();
+		function renderHistoryTable() {
+			const tbody = document.querySelector('#historyTable tbody')
+			tbody.innerHTML = ''
+			if (accessHistory.length === 0) {
+				tbody.innerHTML = `<tr><td colspan="3" style="text-align: center; color: var(--text-muted);">Hali kirish tarixi mavjud emas.</td></tr>`
+				return
+			}
+			accessHistory.forEach(h => {
+				tbody.innerHTML += `
+                    <tr>
+                        <td><b>${h.user}</b></td>
+                        <td>${h.action}</td>
+                        <td>${h.time}</td>
+                    </tr>
+                `
+			})
+		}
 	</script>
 </body>
 
